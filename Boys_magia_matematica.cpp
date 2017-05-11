@@ -105,6 +105,45 @@ void Primos_Ate_N(ll N, vector<ll>& Primos)
 		}
 }
 
+//Retorna todos os primos ate N, guardando no vetor Primos
+//Tecnica: Crivo de Atkins - Mais rapido que Erastotenes
+void Primos_Ate_N(ll N, vector<ll>& Primos)
+{
+	if (N > 2)  Primos.push_back(2);
+	if (N > 3)  Primos.push_back(3);
+
+	bool *sieve;
+	sieve = (bool *)malloc(N*sizeof(bool));
+	for (ll i=0; i<N; i++)
+		sieve[i] = false;
+
+	for (ll x = 1; x*x < N; x++)
+		for (ll y = 1; y*y < N; y++)
+		{
+			ll n = (4*x*x)+(y*y);
+			if (n <= N && (n % 12 == 1 || n % 12 == 5))
+				sieve[n] ^= true;
+
+			n = (3*x*x)+(y*y);
+			if (n <= N && n % 12 == 7)
+				sieve[n] ^= true;
+
+			n = (3*x*x)-(y*y);
+			if (x > y && n <= N && n % 12 == 11)
+				sieve[n] ^= true;
+		}
+
+	for (ll r = 5; r*r < N; r++)
+		if (sieve[r])
+			for (ll i = r*r; i < N; i += r*r)
+				sieve[i] = false;
+
+	for (ll a = 5; a < N; a++)
+		if (sieve[a])
+			Primos.push_back(a);
+
+}
+
 //Fatora N, retornando um vetor de pares <fator, expoente> "Fatores" contendo SOMENTE os primos divisores de N
 //Necessario por um vetor Primos contendo todos os primos ate pelo menos sqrt(N) (Primos_Ate_N( (ll) ceil( (double) sqrt(N) ), Primos))
 void FatorarN_ContemPrimosNecessarios(ll N, vector<ll> Primos, vector<ii>& Fatores)
